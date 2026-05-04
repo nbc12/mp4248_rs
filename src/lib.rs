@@ -6,6 +6,7 @@ pub const DEFAULT_ADDRESS: u8 = 0x67;
 
 #[repr(u8)]
 #[derive(Clone, Copy)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 enum Reg {
     Operation = 0x01,
     ClearFaults = 0x03,
@@ -26,6 +27,7 @@ enum Reg {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum SwitchingFrequency {
     F280kHz = 0b00,
     F420kHz = 0b01,
@@ -45,6 +47,7 @@ impl SwitchingFrequency {
 /// External SWA FET RDS(ON) — must match the actual FET on the board.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum SwaFetRon {
     Mohm5 = 0b00,
     Mohm10 = 0b01,
@@ -65,6 +68,7 @@ impl SwaFetRon {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum LineDropCompensation {
     None = 0b00,
     Mv100At3A = 0b01,
@@ -86,6 +90,7 @@ impl LineDropCompensation {
 /// SWC peak current limit / SWB valley current limit
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum SwitchingCurrentLimit {
     /// 8 A SWC peak / 6 A SWB valley
     Swc8Swb6 = 0b00,
@@ -110,6 +115,7 @@ impl SwitchingCurrentLimit {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Rsens {
     Mohm5 = 0,
     Mohm10 = 1,
@@ -118,6 +124,7 @@ pub enum Rsens {
 /// VREF rising slew rate. Multiply by fb_ratio for VOUT slew rate.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum SlewRateRise {
     Mv0_08PerUs = 0b00,
     Mv0_16PerUs = 0b01,
@@ -139,6 +146,7 @@ impl SlewRateRise {
 /// VREF falling slew rate. Multiply by fb_ratio for VOUT slew rate.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum SlewRateFall {
     Mv0_02PerUs = 0b00,
     Mv0_04PerUs = 0b01,
@@ -160,6 +168,7 @@ impl SlewRateFall {
 /// Blanking time before entering CC mode
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum CcBlankTimer {
     Us250 = 0b00,
     Ms3 = 0b01,
@@ -180,6 +189,7 @@ impl CcBlankTimer {
 
 /// Decoded STATUS_WORD (0x79)
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct StatusWord(pub u16);
 
 impl StatusWord {
@@ -198,6 +208,7 @@ impl StatusWord {
 
 /// Decoded STATUS_TEMPERATURE (0x7D)
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct StatusTemperature(pub u8);
 
 impl StatusTemperature {
@@ -208,6 +219,7 @@ impl StatusTemperature {
 
 /// Combined fault snapshot — returned by `read_alert_report()` in your alert-pin handler
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct AlertReport {
     pub status_word: StatusWord,
     pub status_temperature: StatusTemperature,
@@ -301,6 +313,7 @@ pub trait ChargerPSU {
 
 // ── Driver ────────────────────────────────────────────────────────────────────
 
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct Mp4248<I2C> {
     i2c: I2C,
     address: u8,
