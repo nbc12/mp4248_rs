@@ -121,6 +121,24 @@ pub enum Rsens {
     Mohm10 = 1,
 }
 
+impl Rsens {
+    /// IMON amplifier gain (V/V) for this sense resistor.
+    pub const fn gain(self) -> f32 {
+        match self {
+            Rsens::Mohm5  => 68.0,
+            Rsens::Mohm10 => 34.0,
+        }
+    }
+
+    /// Physical resistance value (mΩ).
+    pub const fn mohm(self) -> f32 {
+        match self {
+            Rsens::Mohm5  =>  5.0,
+            Rsens::Mohm10 => 10.0,
+        }
+    }
+}
+
 /// VREF rising slew rate. Multiply by fb_ratio for VOUT slew rate.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
@@ -302,7 +320,11 @@ pub trait ChargerPSU {
     async fn set_i2c_address_bits(&mut self, a5_a1: u8) -> Result<(), Self::Error>;
     async fn get_i2c_address_bits(&mut self) -> Result<u8, Self::Error>;
 
-    // MFR_STATUS_MASK (0xD8)
+    // MFR_STATUS_MASK (0xD8) — 8-bit, groups map to STATUS_WORD groups, NOT STATUS_BYTE positions:
+    //   Bit 7: VOUT group  — 1=mask VOUT_OV from ALERT#
+    //   Bit 6: IOUT group  — 1=mask IOUT_OC + IOUT/POUT summary + OC_EXIT from ALERT#
+    //   Bit 4: TEMP group  — 1=mask temperature faults from ALERT#
+    //   Bit 3: PG_STATUS#  — 1=mask PGOOD# deassert from ALERT#
     async fn read_status_mask(&mut self) -> Result<u8, Self::Error>;
     async fn write_status_mask(&mut self, value: u8) -> Result<(), Self::Error>;
 
